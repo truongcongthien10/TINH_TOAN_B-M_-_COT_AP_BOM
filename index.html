@@ -8,7 +8,7 @@
         * { box-sizing: border-box; }
         body { 
             font-family: Arial, sans-serif; 
-            max-width: 620px; /* Mở rộng chiều rộng bảng để chữ thoáng đẹp hơn */
+            max-width: 500px; /* Giữ nguyên kích thước bảng vừa vặn */
             margin: 20px auto; 
             padding: 10px; 
             background-color: #f4f6f9; 
@@ -22,8 +22,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
         }
 
-        .calc-table col.col-label { width: 55%; }
-        .calc-table col.col-value { width: 35%; }
+        /* Tối ưu tỉ lệ 3 cột: Cột giá trị màu đỏ/vàng tăng lên 38% để đủ chỗ cho chữ "Không dùng máy bơm" */
+        .calc-table col.col-label { width: 52%; }
+        .calc-table col.col-value { width: 38%; }
         .calc-table col.col-unit { width: 10%; }
 
         .header { 
@@ -84,10 +85,10 @@
             color: white; 
             text-align: right; 
             font-weight: bold; 
-            padding: 8px 10px; 
+            padding: 8px 6px; 
             font-size: 14px; 
             border-bottom: 2px solid #ffffff; 
-            white-space: nowrap; /* Giữ chữ trên 1 hàng, không cho tự xuống dòng */
+            white-space: nowrap; /* Bắt buộc không gãy dòng */
         }
 
         .unit-cell {
@@ -183,8 +184,8 @@
         </tr>
         <tr>
             <td class="label">Cột áp tổng máy bơm (H)</td>
-            <td class="result-red" id="h_pump_cell"><span id="h_pump">0.0</span></td>
-            <td class="unit-cell" id="h_pump_unit">(m)</td>
+            <td class="result-red" id="h_pump_cell">Không dùng máy bơm</td>
+            <td class="unit-cell">(m)</td>
         </tr>
         <tr>
             <td class="label" style="color: #ffcccc;">Áp lực vận hành sau bơm (H)</td>
@@ -203,8 +204,8 @@
         </tr>
         <tr>
             <td class="label">Công suất điện của máy bơm (P)</td>
-            <td class="result-red" id="power_cell"><span id="power_kw">0.00</span></td>
-            <td class="unit-cell" id="power_unit">KW</td>
+            <td class="result-red" id="power_cell">Không dùng máy bơm</td>
+            <td class="unit-cell">KW</td>
         </tr>
     </tbody>
 </table>
@@ -241,37 +242,23 @@ function calculate() {
     let H_pump_calc = Hf + pEnd + (zEnd - zStart) - pStart;
 
     let h_pump_cell = document.getElementById('h_pump_cell');
-    let h_pump_unit = document.getElementById('h_pump_unit');
     let power_cell = document.getElementById('power_cell');
-    let power_unit = document.getElementById('power_unit');
     let eta_cell = document.getElementById('eta_cell');
 
     if (H_pump_calc <= 0) {
-        // Trường hợp KHÔNG CẦN BƠM -> Gộp ô kết quả với ô đơn vị
-        h_pump_cell.colSpan = 2;
         h_pump_cell.innerText = "Không dùng máy bơm";
-        h_pump_unit.style.display = "none";
-
-        power_cell.colSpan = 2;
         power_cell.innerText = "Không dùng máy bơm";
-        power_unit.style.display = "none";
-
         eta_cell.innerText = "-";
         document.getElementById('p_after').innerText = pStart.toFixed(1);
     } else {
-        // Trường hợp CẦN BƠM -> Trả về 2 ô riêng biệt
-        h_pump_cell.colSpan = 1;
-        h_pump_cell.innerHTML = '<span id="h_pump">' + H_pump_calc.toFixed(1) + '</span>';
-        h_pump_unit.style.display = "";
-
-        power_cell.colSpan = 1;
-        power_cell.innerHTML = '<span id="power_kw">' + Math.max(0, (9.81 * Q_m3s * H_pump_calc) / eta).toFixed(2) + '</span>';
-        power_unit.style.display = "";
-
+        h_pump_cell.innerText = H_pump_calc.toFixed(1);
         eta_cell.innerText = eta.toString();
 
         let P_after = pStart + H_pump_calc;
         document.getElementById('p_after').innerText = P_after.toFixed(1);
+
+        let power_kw = (9.81 * Q_m3s * H_pump_calc) / eta;
+        power_cell.innerText = power_kw.toFixed(2);
     }
 
     document.getElementById('hf').innerText = Hf.toFixed(1);
