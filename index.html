@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Toán Bơm & Cột Áp Bơm - HueWACO</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; max-width: 550px; margin: 20px auto; padding: 10px; background-color: #f4f6f9; }
+        
+        /* Cấu trúc bảng căn thẳng hàng tắp 100% */
+        .calc-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background-color: white; 
+            border: 2px solid #0070c0; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+        }
+
+        .calc-table col.col-label { width: 65%; }
+        .calc-table col.col-value { width: 35%; }
+
+        .header { 
+            background-color: #0070c0; 
+            color: white; 
+            text-align: center; 
+            font-weight: bold; 
+            padding: 12px; 
+            font-size: 17px; 
+            text-transform: uppercase; 
+        }
+
+        .label { 
+            background-color: #0070c0; 
+            color: white; 
+            padding: 8px 10px; 
+            font-size: 14px; 
+            font-weight: 500; 
+            border-bottom: 1px solid #ffffff; 
+            vertical-align: middle;
+        }
+
+        .input-cell { 
+            padding: 4px 5px; 
+            background-color: #ffffff; 
+            border-bottom: 1px solid #dcdcdc; 
+            vertical-align: middle;
+        }
+
+        input, select { 
+            width: 100%; 
+            padding: 6px; 
+            box-sizing: border-box; 
+            text-align: right; 
+            font-weight: bold; 
+            border: 1px solid #a6a6a6; 
+            border-radius: 3px; 
+            font-size: 14px; 
+            color: #000; 
+        }
+        select { text-align-last: right; }
+
+        .section-title { 
+            background-color: #ffff00; 
+            color: black; 
+            font-weight: bold; 
+            text-align: center; 
+            padding: 8px; 
+            font-size: 15px; 
+            border-top: 1px solid #0070c0; 
+            border-bottom: 1px solid #0070c0; 
+        }
+
+        /* Ô kết quả hiển thị */
+        .result-cell { 
+            background-color: #e6f2ff; 
+            color: #000000; 
+            text-align: right; 
+            font-weight: bold; 
+            padding: 8px; 
+            font-size: 14px; 
+            border-bottom: 1px solid #dcdcdc; 
+        }
+
+        /* Khối kết quả công suất màu vàng */
+        .total-box { 
+            background-color: #ffff00; 
+            color: #0070c0; 
+            text-align: center; 
+            font-weight: bold; 
+            padding: 12px; 
+            font-size: 20px; 
+            border-top: 1px solid #0070c0; 
+        }
+    </style>
+</head>
+<body>
+
+<table class="calc-table">
+    <colgroup>
+        <col class="col-label">
+        <col class="col-value">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="2" class="header">TÍNH TOÁN CỘT ÁP & CÔNG SUẤT BƠM</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="label">Lưu lượng tính toán (m³/ngđ)</td>
+            <td class="input-cell"><input type="number" id="q_day" value="10000" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Đường kính tuyến ống (mm)</td>
+            <td class="input-cell"><input type="number" id="diameter" value="400" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Chiều dài đường ống (m)</td>
+            <td class="input-cell"><input type="number" id="length" value="18700" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Vật liệu đường ống</td>
+            <td class="input-cell">
+                <select id="material" onchange="calculate()">
+                    <option value="150">Ống PVC (C = 150)</option>
+                    <option value="140" selected>Ống HDPE (C = 140)</option>
+                    <option value="130">Ống gang dẻo mới - DIP (C = 130)</option>
+                    <option value="120">Ống gang dẻo phục hồi - DIP_R (C = 120)</option>
+                    <option value="120">Ống thép mới - SP_N (C = 120)</option>
+                    <option value="110">Ống thép phục hồi - SP_R (C = 110)</option>
+                    <option value="90">Ống thép cũ - SP_O (C = 90)</option>
+                    <option value="140">Ống Inox - INOX (C = 140)</option>
+                    <option value="110">Ống gang xám - CIP (C = 110)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Áp lực yêu cầu điểm đầu (m)</td>
+            <td class="input-cell"><input type="number" id="pStart" value="40" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Áp lực yêu cầu điểm cuối (m)</td>
+            <td class="input-cell"><input type="number" id="pEnd" value="15" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Cao độ điểm đầu Z₁ (m)</td>
+            <td class="input-cell"><input type="number" id="zStart" value="3" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Cao độ điểm cuối Z₂ (m)</td>
+            <td class="input-cell"><input type="number" id="zEnd" value="6" oninput="calculate()"></td>
+        </tr>
+        <tr>
+            <td class="label">Hiệu suất máy bơm (η)</td>
+            <td class="input-cell"><input type="number" id="eta" value="0.75" step="0.01" max="1" min="0.1" oninput="calculate()"></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="section-title">KẾT QUẢ TÍNH TOÁN</td>
+        </tr>
+
+        <tr>
+            <td class="label">Vận tốc nước trong ống v (m/s)</td>
+            <td class="result-cell"><span id="velocity">0.00</span></td>
+        </tr>
+        <tr>
+            <td class="label">Tổn thất thủy lực Hf (m)</td>
+            <td class="result-cell"><span id="hf">0.00</span></td>
+        </tr>
+        <tr>
+            <td class="label">Cột áp tổng máy bơm H (m)</td>
+            <td class="result-cell"><span id="h_pump">0.00</span></td>
+        </tr>
+        <tr>
+            <td class="label">Áp lực vận hành sau bơm (m)</td>
+            <td class="result-cell"><span id="p_after">0.00</span></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="section-title">CÔNG SUẤT ĐIỆN MÁY BƠM (kW)</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="total-box" id="power_kw">0.00 kW</td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+function calculate() {
+    let Q_day = parseFloat(document.getElementById('q_day').value) || 0;
+    let d = parseFloat(document.getElementById('diameter').value) || 0;
+    let L = parseFloat(document.getElementById('length').value) || 0;
+    let C = parseFloat(document.getElementById('material').value) || 140;
+    let pStart = parseFloat(document.getElementById('pStart').value) || 0;
+    let pEnd = parseFloat(document.getElementById('pEnd').value) || 0;
+    let zStart = parseFloat(document.getElementById('zStart').value) || 0;
+    let zEnd = parseFloat(document.getElementById('zEnd').value) || 0;
+    let eta = parseFloat(document.getElementById('eta').value) || 0.75;
+
+    // Chuyển đổi đơn vị
+    let Q_m3s = Q_day / 86400; // m3/s
+    let D_m = d / 1000;         // m
+
+    // 1. Tính vận tốc v (m/s)
+    let velocity = 0;
+    if (D_m > 0) {
+        let area = Math.PI * Math.pow(D_m / 2, 2);
+        velocity = Q_m3s / area;
+    }
+
+    // 2. Tính tổn thất thủy lực Hf theo công thức Hazen-Williams
+    let Hf = 0;
+    if (L > 0 && D_m > 0 && C > 0 && Q_m3s > 0) {
+        Hf = 10.67 * L * Math.pow(Q_m3s, 1.852) / (Math.pow(C, 1.852) * Math.pow(D_m, 4.87));
+    }
+
+    // 3. Tính cột áp tổng máy bơm H (m)
+    // H = Hf + (pEnd - pStart) + (zEnd - zStart)
+    let H_pump = Hf + (pEnd - pStart) + (zEnd - zStart);
+
+    // 4. Áp lực vận hành ngay sau bơm
+    let P_after = Hf + pEnd + (zEnd - zStart);
+
+    // 5. Công suất điện P (kW) = (9.81 * Q * H) / eta
+    let power_kw = 0;
+    if (eta > 0) {
+        power_kw = (9.81 * Q_m3s * H_pump) / eta;
+    }
+
+    // Hiển thị kết quả
+    document.getElementById('velocity').innerText = velocity.toFixed(2);
+    document.getElementById('hf').innerText = Hf.toFixed(2);
+    document.getElementById('h_pump').innerText = H_pump.toFixed(2);
+    document.getElementById('p_after').innerText = P_after.toFixed(2);
+    document.getElementById('power_kw').innerText = power_kw.toFixed(2) + " kW";
+}
+
+// Chạy tính toán ngay khi tải trang
+calculate();
+</script>
+
+</body>
+</html>
