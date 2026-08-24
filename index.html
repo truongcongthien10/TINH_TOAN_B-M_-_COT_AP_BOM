@@ -75,7 +75,7 @@
 
         @media (max-width: 480px) {
             .form-grid {
-                grid-template-columns: 1fr; /* Xuống 1 cột hoàn toàn khi màn hình rất nhỏ */
+                grid-template-columns: 1fr; /* Xuống 1 cột trên màn hình điện thoại nhỏ */
                 gap: 6px;
             }
         }
@@ -95,7 +95,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Xóa mũi tên tăng giảm số */
+        /* Xóa nút tăng giảm số */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -190,19 +190,19 @@
         <div class="form-grid">
             <div class="form-group">
                 <label for="q_day">Lưu lượng Q (m³/ngđ):</label>
-                <input type="number" id="q_day" value="10000" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="q_day" value="10000" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="d_mm">Đường kính D (mm):</label>
-                <input type="number" id="d_mm" value="450" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="d_mm" value="450" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="length">Chiều dài L (m):</label>
-                <input type="number" id="length" value="18700" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="length" value="18700" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="material">Vật liệu ống:</label>
-                <select id="material" onchange="calculateHydraulics()">
+                <select id="material">
                     <option value="140" selected>Ống HDPE (C = 140)</option>
                     <option value="140">Ống PVC (C = 140)</option>
                     <option value="130">Ống gang dẻo mới (C = 130)</option>
@@ -216,23 +216,23 @@
             </div>
             <div class="form-group">
                 <label for="h_head">Áp lực yêu cầu đầu (m):</label>
-                <input type="number" id="h_head" value="40" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="h_head" value="40" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="h_tail">Áp lực yêu cầu cuối (m):</label>
-                <input type="number" id="h_tail" value="15" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="h_tail" value="15" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="z_head">Cao độ Z điểm đầu (m):</label>
-                <input type="number" id="z_head" value="3" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="z_head" value="3" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="z_tail">Cao độ Z điểm cuối (m):</label>
-                <input type="number" id="z_tail" value="6" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="z_tail" value="6" inputmode="decimal">
             </div>
             <div class="form-group" style="grid-column: span 2;">
                 <label for="efficiency">Hiệu suất bơm (η):</label>
-                <input type="number" id="efficiency" value="0.75" step="0.01" inputmode="decimal" oninput="calculateHydraulics()">
+                <input type="number" id="efficiency" value="0.75" step="0.01" inputmode="decimal">
             </div>
         </div>
 
@@ -319,6 +319,7 @@
         document.getElementById('res_power').innerText = powerText;
     }
 
+    // Tự động tính 1 lần ban đầu khi vừa tải trang
     window.onload = calculateHydraulics;
 </script>
 
