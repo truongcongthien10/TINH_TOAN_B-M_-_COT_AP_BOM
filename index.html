@@ -14,6 +14,7 @@
             --input-bg: #f9fbf9;
             --border-color: #c8d6c9;
             --accent-blue: #005a9e;
+            --btn-blue: rgb(0, 112, 192); /* Màu xanh dương theo yêu cầu */
             --result-bg: #eef7ee;
         }
 
@@ -75,7 +76,7 @@
 
         @media (max-width: 480px) {
             .form-grid {
-                grid-template-columns: 1fr; /* Xuống 1 cột trên màn hình điện thoại nhỏ */
+                grid-template-columns: 1fr;
                 gap: 6px;
             }
         }
@@ -125,21 +126,21 @@
 
         .btn-calc {
             width: 100%;
-            background-color: var(--excel-header-bg);
-            color: white;
+            background-color: var(--btn-blue);
+            color: #ffffff;
             border: none;
             padding: 10px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 12px;
             margin-bottom: 5px;
-            transition: background 0.2s;
+            transition: opacity 0.2s;
         }
 
         .btn-calc:active {
-            background-color: #0b582e;
+            opacity: 0.85;
         }
 
         .result-box {
@@ -175,7 +176,7 @@
         }
 
         .highlight {
-            color: #d83b01; /* Màu cam đỏ nổi bật cho các thông số chính */
+            color: #d83b01;
             font-size: 0.95rem;
         }
     </style>
@@ -194,7 +195,7 @@
             </div>
             <div class="form-group">
                 <label for="d_mm">Đường kính D (mm):</label>
-                <input type="number" id="d_mm" value="450" inputmode="decimal">
+                <input type="number" id="d_mm" value="350" inputmode="decimal">
             </div>
             <div class="form-group">
                 <label for="length">Chiều dài L (m):</label>
@@ -203,14 +204,14 @@
             <div class="form-group">
                 <label for="material">Vật liệu ống:</label>
                 <select id="material">
-                    <option value="140" selected>Ống HDPE (C = 140)</option>
+                    <option value="140" selected>Ống Inox (C = 140)</option>
+                    <option value="140">Ống HDPE (C = 140)</option>
                     <option value="140">Ống PVC (C = 140)</option>
                     <option value="130">Ống gang dẻo mới (C = 130)</option>
                     <option value="120">Ống gang dẻo phục hồi (C = 120)</option>
                     <option value="120">Ống thép mới (C = 120)</option>
                     <option value="110">Ống thép phục hồi (C = 110)</option>
                     <option value="90">Ống thép cũ (C = 90)</option>
-                    <option value="140">Ống Inox (C = 140)</option>
                     <option value="110">Ống gang xám (C = 110)</option>
                 </select>
             </div>
