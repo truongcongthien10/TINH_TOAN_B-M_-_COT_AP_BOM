@@ -3,256 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BẢNG TÍNH CỘT ÁP BƠM VÀ CÔNG SUẤT MÁY BƠM</title>
+    <title>Tính Toán Cột Áp Bơm & Công Suất Máy Bơm</title>
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 480px; 
-            margin: 20px auto; 
-            padding: 10px; 
-            background-color: #f0f0f0; 
-        }
-        
-        .calc-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            background-color: #0070c0; 
-            border: 2px solid #0070c0; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+        :root {
+            --primary-color: #0056b3;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
         }
 
-        .calc-table col.col-label { width: 62%; }
-        .calc-table col.col-value { width: 38%; }
-
-        .header { 
-            background-color: #0070c0; 
-            color: white; 
-            text-align: center; 
-            font-weight: bold; 
-            padding: 12px 8px; 
-            font-size: 16px; 
-            text-transform: uppercase; 
-            border-bottom: 2px solid #ffffff;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
         }
 
-        .label { 
-            background-color: #0070c0; 
-            color: white; 
-            padding: 8px 10px; 
-            font-size: 13.5px; 
-            font-weight: bold; 
-            border-bottom: 1px solid #ffffff; 
-            border-right: 1px solid #ffffff;
-            vertical-align: middle;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .input-cell { 
-            padding: 4px 6px; 
-            background-color: #0070c0; 
-            border-bottom: 1px solid #ffffff; 
-            vertical-align: middle;
-        }
-
-        input, select { 
-            width: 100%; 
-            padding: 6px; 
-            box-sizing: border-box; 
-            text-align: right; 
-            font-weight: bold; 
-            border: 1px solid #a6a6a6; 
-            border-radius: 4px; 
-            font-size: 13.5px; 
-            color: #000; 
-            background-color: #ffffff;
-        }
-        select { text-align-last: right; }
-
-        .section-yellow { 
-            background-color: #ffff00; 
-            color: black; 
-            font-weight: bold; 
-            text-align: center; 
-            padding: 8px; 
-            font-size: 15px; 
-            border-top: 1px solid #ffffff; 
-            border-bottom: 1px solid #ffffff; 
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
             text-transform: uppercase;
+            font-size: 1.5rem;
         }
 
-        .result-red { 
-            background-color: #ff0000; 
-            color: white; 
-            text-align: right; 
-            font-weight: bold; 
-            padding: 8px 10px; 
-            font-size: 14px; 
-            border-bottom: 1px solid #ffffff; 
-            white-space: nowrap;
-        }
-
-        .result-white {
-            background-color: #ffffff;
-            color: #000000;
-            text-align: right;
+        .section-title {
             font-weight: bold;
-            padding: 8px 10px;
-            font-size: 14px;
-            border-bottom: 1px solid #0070c0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
         }
 
-        .unit-span {
-            font-size: 11px;
-            font-weight: normal;
-            margin-left: 3px;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-calc {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background 0.3s;
+        }
+
+        .btn-calc:hover {
+            background-color: #003d82;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            background-color: #eef5fc;
+            border-left: 5px solid var(--primary-color);
+            padding: 15px 20px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-value {
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        .highlight {
+            color: #d9534f;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<table class="calc-table">
-    <colgroup>
-        <col class="col-label">
-        <col class="col-value">
-    </colgroup>
-    <thead>
-        <tr>
-            <th colspan="2" class="header">BẢNG TÍNH CỘT ÁP BƠM VÀ CÔNG SUẤT MÁY BƠM</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="label">Lưu lượng tính toán (m³/ngđ)</td>
-            <td class="input-cell"><input type="number" id="flowRate" value="10000" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Đường kính tuyến ống (mm)</td>
-            <td class="input-cell"><input type="number" id="diameter" value="450" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Vật liệu đường ống</td>
-            <td class="input-cell">
-                <select id="material" onchange="calculate()">
-                    <option value="150">Ống PVC (C = 150)</option>
-                    <option value="140" selected>Ống HDPE (C = 140)</option>
-                    <option value="130">Ống gang dẻo mới (C = 130)</option>
-                    <option value="120">Ống gang dẻo phục hồi (C = 120)</option>
-                    <option value="120">Ống thép mới (C = 120)</option>
-                    <option value="110">Ống thép phục hồi (C = 110)</option>
-                    <option value="90">Ống thép cũ (C = 90)</option>
-                    <option value="140">Ống Inox (C = 140)</option>
-                    <option value="110">Ống gang xám (C = 110)</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td class="label">Chiều dài đường ống (m)</td>
-            <td class="input-cell"><input type="number" id="length" value="18700" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Áp lực yêu cầu điểm đầu (m)</td>
-            <td class="input-cell"><input type="number" id="pStart" value="40" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Áp lực yêu cầu điểm cuối (m)</td>
-            <td class="input-cell"><input type="number" id="pEnd" value="15" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Z điểm đầu (m)</td>
-            <td class="input-cell"><input type="number" id="zStart" value="3" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Z điểm cuối (m)</td>
-            <td class="input-cell"><input type="number" id="zEnd" value="6" oninput="calculate()"></td>
-        </tr>
-        <tr>
-            <td class="label">Hiệu suất máy bơm (η)</td>
-            <td class="input-cell"><input type="number" id="eta" value="0.75" step="0.01" min="0.1" max="1" oninput="calculate()"></td>
-        </tr>
+<div class="container">
+    <h2>Tính Toán Cột Áp & Công Suất Bơm (2026)</h2>
 
-        <tr>
-            <td colspan="2" class="section-yellow">KẾT QUẢ</td>
-        </tr>
+    <div class="section-title">DỮ LIỆU ĐẦU VÀO</div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="q_day">Lưu lượng tính toán (m³/ngđ):</label>
+            <input type="number" id="q_day" value="10000" step="any">
+        </div>
+        <div class="form-group">
+            <label for="d_mm">Đường kính tuyến ống (mm):</label>
+            <input type="number" id="d_mm" value="450" step="any">
+        </div>
+        <div class="form-group">
+            <label for="length">Chiều dài đường ống (m):</label>
+            <input type="number" id="length" value="18700" step="any">
+        </div>
+        <div class="form-group">
+            <label for="material">Vật liệu đường ống:</label>
+            <select id="material">
+                <option value="140" selected>Ống HDPE (C = 140)</option>
+                <option value="140">Ống PVC (C = 140)</option>
+                <option value="130">Ống gang dẻo mới (C = 130)</option>
+                <option value="120">Ống gang dẻo phục hồi (C = 120)</option>
+                <option value="120">Ống thép mới (C = 120)</option>
+                <option value="110">Ống thép phục hồi (C = 110)</option>
+                <option value="90">Ống thép cũ (C = 90)</option>
+                <option value="140">Ống Inox (C = 140)</option>
+                <option value="110">Ống gang xám (C = 110)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="h_head">Áp lực yêu cầu điểm đầu (m):</label>
+            <input type="number" id="h_head" value="40" step="any">
+        </div>
+        <div class="form-group">
+            <label for="h_tail">Áp lực yêu cầu điểm cuối (m):</label>
+            <input type="number" id="h_tail" value="15" step="any">
+        </div>
+        <div class="form-group">
+            <label for="z_head">Cao độ Z điểm đầu (m):</label>
+            <input type="number" id="z_head" value="3" step="any">
+        </div>
+        <div class="form-group">
+            <label for="z_tail">Cao độ Z điểm cuối (m):</label>
+            <input type="number" id="z_tail" value="6" step="any">
+        </div>
+        <div class="form-group">
+            <label for="efficiency">Hiệu suất máy bơm (0.1 - 1.0):</label>
+            <input type="number" id="efficiency" value="0.75" step="0.01" max="1" min="0.1">
+        </div>
+    </div>
 
-        <tr>
-            <td class="label" style="vertical-align: middle;">
-                Tổn thất thủy lực (Hf)<br>
-                Cột áp tổng máy bơm (H)<br>
-                Áp lực vận hành sau bơm (H)
-            </td>
-            <td class="result-red" style="vertical-align: middle; line-height: 1.8;">
-                <span id="hf">21.00</span> <span class="unit-span">(m)</span><br>
-                <span id="h_pump">0.00</span> <span class="unit-span">(m)</span><br>
-                <span id="p_after_pump">-</span> <span class="unit-span">m</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="label">Tính toán vận tốc (v)</td>
-            <td class="result-white"><span id="velocity">0.73</span> <span class="unit-span">m/s</span></td>
-        </tr>
+    <button class="btn-calc" onclick="calculateHydraulics()">Tính Toán Kết Quả</button>
 
-        <tr>
-            <td colspan="2" class="section-yellow">
-                CÔNG SUẤT ĐIỆN CỦA MÁY BƠM (P)
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" class="section-yellow" style="font-size: 20px; color: #0000ff; padding: 12px;">
-                <span id="p_kw">Không cần máy bơm</span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <div class="section-title">KẾT QUẢ TÍNH TOÁN</div>
+    <div class="result-box">
+        <div class="result-item">
+            <span>Vận tốc dòng chảy (v):</span>
+            <span class="result-value" id="res_v">- m/s</span>
+        </div>
+        <div class="result-item">
+            <span>Tổn thất thủy lực toàn tuyến (Hf):</span>
+            <span class="result-value" id="res_hf">- m</span>
+        </div>
+        <div class="result-item">
+            <span>Cột áp tổng máy bơm yêu cầu (H_bơm):</span>
+            <span class="result-value highlight" id="res_h_pump">- m</span>
+        </div>
+        <div class="result-item">
+            <span>Áp lực vận hành sau bơm:</span>
+            <span class="result-value" id="res_p_oper">- m</span>
+        </div>
+        <div class="result-item">
+            <span>Công suất điện máy bơm (P):</span>
+            <span class="result-value highlight" id="res_power">- kW</span>
+        </div>
+    </div>
+</div>
 
 <script>
-function calculate() {
-    let qDay = parseFloat(document.getElementById('flowRate').value) || 0;
-    let d = parseFloat(document.getElementById('diameter').value) || 0;
-    let L = parseFloat(document.getElementById('length').value) || 0;
-    let C = parseFloat(document.getElementById('material').value) || 140;
-    let pStart = parseFloat(document.getElementById('pStart').value) || 0;
-    let pEnd = parseFloat(document.getElementById('pEnd').value) || 0;
-    let zStart = parseFloat(document.getElementById('zStart').value) || 0;
-    let zEnd = parseFloat(document.getElementById('zEnd').value) || 0;
-    let eta = parseFloat(document.getElementById('eta').value) || 0.75;
+    function calculateHydraulics() {
+        // Lấy dữ liệu đầu vào
+        const qDay = parseFloat(document.getElementById('q_day').value);
+        const dMm = parseFloat(document.getElementById('d_mm').value);
+        const L = parseFloat(document.getElementById('length').value);
+        const C = parseFloat(document.getElementById('material').value);
+        const hHead = parseFloat(document.getElementById('h_head').value);
+        const hTail = parseFloat(document.getElementById('h_tail').value);
+        const zHead = parseFloat(document.getElementById('z_head').value);
+        const zTail = parseFloat(document.getElementById('z_tail').value);
+        const eta = parseFloat(document.getElementById('efficiency').value);
 
-    let D_m = d / 1000;
-    let Q_m3s = qDay / 86400;
-
-    let Hf = 0;
-    let velocity = 0;
-    let H_pump = 0;
-    let P_kW = 0;
-
-    if (L > 0 && D_m > 0 && C > 0 && Q_m3s > 0) {
-        let K = 11.737;
-        Hf = K * L * Math.pow(Q_m3s, 1.852) / (Math.pow(C, 1.852) * Math.pow(D_m, 4.87));
-
-        let area = Math.PI * Math.pow(D_m / 2, 2);
-        velocity = Q_m3s / area;
-
-        let requiredHead = (zEnd + pEnd + Hf) - (zStart + pStart);
-
-        if (requiredHead > 0) {
-            H_pump = requiredHead;
-            P_kW = (9.81 * Q_m3s * H_pump) / eta;
-            document.getElementById('p_after_pump').innerText = (pStart + H_pump).toFixed(2);
-            document.getElementById('h_pump').innerText = H_pump.toFixed(2);
-            document.getElementById('p_kw').innerText = P_kW.toFixed(2) + " KW";
-        } else {
-            H_pump = 0;
-            P_kW = 0;
-            document.getElementById('p_after_pump').innerText = "-";
-            document.getElementById('h_pump').innerText = "0.00";
-            document.getElementById('p_kw').innerText = "Không cần máy bơm";
+        if (!qDay || !dMm || !L || !C) {
+            alert("Vui lòng nhập đầy đủ các thông số đầu vào!");
+            return;
         }
+
+        // Quy đổi đơn vị
+        const qSec = qDay / 86400; // m3/s
+        const dM = dMm / 1000;      // m
+
+        // 1. Tính tổn thất thủy lực Hazen-Williams (Hf)
+        const hf = (11.767 * L * Math.pow(qSec, 1.852)) / (Math.pow(C, 1.852) * Math.pow(dM, 4.87));
+
+        // 2. Tính Vận tốc dòng chảy (v)
+        const v = (4 * qSec) / (Math.PI * Math.pow(dM, 2));
+
+        // 3. Tính Cột áp tổng máy bơm (H_bơm)
+        const reqHead = (zTail - zHead) + (hTail - hHead) + hf;
+        let hPumpText = "";
+        let pOperText = "";
+        let powerText = "";
+
+        if (reqHead > 0) {
+            hPumpText = reqHead.toFixed(2) + " m";
+            pOperText = (reqHead + hHead).toFixed(2) + " m";
+            
+            // 4. Tính công suất điện máy bơm (P kW)
+            const pKw = (9.81 * qSec * reqHead) / eta;
+            powerText = pKw.toFixed(2) + " kW";
+        } else {
+            hPumpText = "Không cần máy bơm";
+            pOperText = "-";
+            powerText = "Không cần máy bơm";
+        }
+
+        // Hiển thị kết quả ra màn hình
+        document.getElementById('res_v').innerText = v.toFixed(3) + " m/s";
+        document.getElementById('res_hf').innerText = hf.toFixed(2) + " m";
+        document.getElementById('res_h_pump').innerText = hPumpText;
+        document.getElementById('res_p_oper').innerText = pOperText;
+        document.getElementById('res_power').innerText = powerText;
     }
 
-    document.getElementById('hf').innerText = Hf.toFixed(2);
-    document.getElementById('velocity').innerText = velocity.toFixed(2);
-}
-
-calculate();
+    // Tự động tính toán khi mở trang
+    window.onload = calculateHydraulics;
 </script>
 
 </body>
