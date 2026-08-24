@@ -14,7 +14,6 @@
         h2 {
             font-size: 22px;
             font-weight: bold;
-            text-decoration: underline;
             margin-bottom: 20px;
             text-transform: uppercase;
         }
@@ -31,18 +30,22 @@
             text-align: left;
             vertical-align: middle;
         }
-        /* Header màu xanh lục/xanh dương đậm đặc trưng của mẫu */
+        /* Đường kẻ tiêu đề màu xanh trải dài toàn bảng */
         .section-header {
-            background-color: #0066cc;
-            color: #ffffff;
+            background-color: #0056b3;
+            color: #ffffff !important;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 14px;
         }
-        /* Các dòng xen kẽ màu xanh nhạt giống Excel */
+        .section-header td {
+            border: 1px solid #0056b3;
+            padding: 8px 10px;
+        }
+        /* Các dòng dữ liệu xen kẽ màu xanh nhạt */
         tr:nth-child(even) {
-            background-color: #f2f5f9;
+            background-color: #f2f6fc;
         }
-        /* Ô nhập liệu thô sơ ẩn viền, tiệp vào ô Excel */
+        /* Ô nhập liệu khớp vào ô lưới Excel */
         input, select {
             width: 100%;
             box-sizing: border-box;
@@ -52,20 +55,20 @@
             background-color: #ffffff;
         }
         input:focus, select:focus {
-            outline: 2px solid #0066cc;
+            outline: 2px solid #0056b3;
         }
-        /* Nút bấm thô sơ kiểu cổ điển */
+        /* Nút bấm */
         .btn-calc {
-            background-color: #e1e1e1;
-            border: 1px solid #767676;
-            padding: 5px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ababab;
+            padding: 6px 16px;
             cursor: pointer;
             font-size: 13px;
+            font-weight: bold;
         }
         .btn-calc:hover {
-            background-color: #d0d0d0;
+            background-color: #e0e0e0;
         }
-        /* Chữ in đậm cho kết quả */
         .bold-text {
             font-weight: bold;
         }
@@ -82,17 +85,17 @@
         </tr>
         <tr>
             <td style="width: 50%;">Lưu lượng tính toán (m3/ngđ)</td>
-            <td style="width: 25%;"><input type="number" id="Q_day" value="10000" step="any"></td>
-            <td style="width: 25%;" id="Q_s_converted">0.11574074</td>
+            <td style="width: 25%;"><input type="number" id="Q_day" value="10000" step="any" oninput="calculatePump()"></td>
+            <td style="width: 25%; color: #555;" id="Q_s_converted">0.11574074074074074</td>
         </tr>
         <tr>
             <td>Đường kính tuyến ống (mm)</td>
-            <td><input type="number" id="D_mm" value="450" step="any"></td>
-            <td id="D_m_converted">0.45</td>
+            <td><input type="number" id="D_mm" value="450" step="any" oninput="calculatePump()"></td>
+            <td style="width: 25%; color: #555;" id="D_m_converted">0.45</td>
         </tr>
         <tr>
             <td>Chiều dài đường ống (m)</td>
-            <td><input type="number" id="L" value="18700" step="any"></td>
+            <td><input type="number" id="L" value="18700" step="any" oninput="calculatePump()"></td>
             <td></td>
         </tr>
         <tr>
@@ -115,22 +118,22 @@
         </tr>
         <tr>
             <td>Áp lực yêu cầu điểm đầu (m)</td>
-            <td><input type="number" id="H_dau" value="40" step="any"></td>
+            <td><input type="number" id="H_dau" value="40" step="any" oninput="calculatePump()"></td>
             <td></td>
         </tr>
         <tr>
             <td>Áp lực yêu cầu điểm cuối (m)</td>
-            <td><input type="number" id="H_cuoi" value="15" step="any"></td>
+            <td><input type="number" id="H_cuoi" value="15" step="any" oninput="calculatePump()"></td>
             <td></td>
         </tr>
         <tr>
             <td>Z điểm đầu (m)</td>
-            <td><input type="number" id="Z_dau" value="3" step="any"></td>
+            <td><input type="number" id="Z_dau" value="3" step="any" oninput="calculatePump()"></td>
             <td></td>
         </tr>
         <tr>
             <td>Z điểm cuối (m)</td>
-            <td><input type="number" id="Z_cuoi" value="6" step="any"></td>
+            <td><input type="number" id="Z_cuoi" value="6" step="any" oninput="calculatePump()"></td>
             <td></td>
         </tr>
         <tr>
@@ -167,7 +170,7 @@
         </tr>
         <tr>
             <td>Hiệu suất làm việc của máy bơm</td>
-            <td><input type="number" id="efficiency" value="0.75" step="0.01"></td>
+            <td><input type="number" id="efficiency" value="0.75" step="0.01" oninput="calculatePump()"></td>
             <td></td>
         </tr>
         <tr>
@@ -178,15 +181,13 @@
     </table>
 
 <script>
-    // Hàm đồng bộ hiển thị hệ số C khi chọn vật liệu ống
     function updateC() {
         let val = parseFloat(document.getElementById('material').value);
         document.getElementById('C_display').innerText = val.toFixed(1);
-        calculatePump(); // Tự động tính lại khi đổi vật liệu
+        calculatePump();
     }
 
     function calculatePump() {
-        // Lấy dữ liệu đầu vào
         let Q_day = parseFloat(document.getElementById('Q_day').value) || 0;
         let D_mm = parseFloat(document.getElementById('D_mm').value) || 0;
         let L = parseFloat(document.getElementById('L').value) || 0;
@@ -197,53 +198,54 @@
         let Z_cuoi = parseFloat(document.getElementById('Z_cuoi').value) || 0;
         let efficiency = parseFloat(document.getElementById('efficiency').value) || 0.75;
 
-        // Tính các cột chuyển đổi đơn vị giống file mẫu
+        // Quy đổi đơn vị chính xác theo số thực trong file mẫu
         let Q_s = Q_day / 86400; 
         let D_m = D_mm / 1000;   
-        document.getElementById('Q_s_converted').innerText = Q_s.toFixed(16);
-        document.getElementById('D_m_converted').innerText = D_m.toFixed(2);
+        document.getElementById('Q_s_converted').innerText = Q_s;
+        document.getElementById('D_m_converted').innerText = D_m;
 
-        // Tính vận tốc v
+        // Tính vận tốc v = Q / (pi * D^2 / 4)
         let area = Math.PI * Math.pow(D_m, 2) / 4;
         let v = area > 0 ? (Q_s / area) : 0;
 
-        // Tính tổn thất thủy lực Hazen-Williams (Hf)
+        // Tính tổn thất thủy lực Hazen-Williams bằng hằng số chính xác của Excel (10.66699351)
         let Hf = 0;
-        if (C > 0 && D_m > 0) {
-            Hf = (10.67 * L * Math.pow(Q_s, 1.852)) / (Math.pow(C, 1.852) * Math.pow(D_m, 4.87));
+        if (C > 0 && D_m > 0 && Q_s > 0) {
+            Hf = (10.66699351 * L * Math.pow(Q_s, 1.852)) / (Math.pow(C, 1.852) * Math.pow(D_m, 4.87));
         }
 
-        // Tính toán cột áp bơm yêu cầu
-        let nangLuongDau = H_dau + Z_dau;
-        let nangLuongCuoi = H_cuoi + Z_cuoi + Hf;
-        let H_req = nangLuongCuoi - nangLuongDau;
+        // Tính toán cột áp máy bơm
+        // Công thức logic: H_bom = H_cuoi + Z_cuoi + Hf - Z_dau - H_dau
+        let H_req = H_cuoi + Z_cuoi + Hf - Z_dau - H_dau;
 
         let txt_H = "";
         let txt_P = "";
         let txt_H_vanhanh = "-";
 
+        // Đồng bộ chuẩn chữ hiển thị "Không cần máy bơm" khi áp lực tự nhiên đủ
         if (H_req <= 0) {
             txt_H = "Không cần máy bơm";
             txt_P = "Không cần máy bơm";
             txt_H_vanhanh = "-";
         } else {
-            txt_H = H_req.toFixed(15);
-            // Tính công suất P (kW)
+            txt_H = H_req;
             let P_kw = (9.81 * 1000 * Q_s * H_req) / (efficiency * 1000);
-            txt_P = P_kw.toFixed(15);
-            txt_H_vanhanh = (H_dau + H_req).toFixed(15); // Áp lực vận hành thực tế sau bơm
+            txt_P = P_kw;
+            txt_H_vanhanh = H_dau + H_req;
         }
 
-        // Đẩy kết quả hiển thị ra bảng dữ liệu
-        document.getElementById('res_Hf').innerText = Hf.toFixed(15);
+        // Trả kết quả hiển thị ra bảng chính xác từng ký tự
+        document.getElementById('res_Hf').innerText = Hf;
         document.getElementById('res_H').innerText = txt_H;
         document.getElementById('res_H_vanhanh').innerText = txt_H_vanhanh;
-        document.getElementById('res_v').innerText = v.toFixed(16);
+        document.getElementById('res_v').innerText = v;
         document.getElementById('res_P').innerText = txt_P;
     }
 
-    // Chạy kích hoạt tính toán ngay khi mở trang web
-    calculatePump();
+    // Tự động chạy ngay khi tải trang xong
+    window.onload = function() {
+        calculatePump();
+    };
 </script>
 
 </body>
