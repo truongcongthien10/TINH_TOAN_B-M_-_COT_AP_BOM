@@ -14,8 +14,12 @@
             --input-bg: #f9fbf9;
             --border-color: #c8d6c9;
             --accent-blue: #005a9e;
-            --btn-blue: rgb(0, 112, 192); /* Màu xanh dương theo yêu cầu */
+            --btn-green: #107c41;
             --result-bg: #eef7ee;
+
+            /* Màu viền và nền shade vàng nhạt khi hover/focus */
+            --hover-yellow-bg: #ffffcc;
+            --hover-yellow-border: #e6b800;
         }
 
         * {
@@ -67,7 +71,6 @@
             text-transform: uppercase;
         }
 
-        /* Responsive Grid cho điện thoại */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -115,32 +118,54 @@
             outline: none;
             width: 100%;
             height: 34px;
-            transition: all 0.2s;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        /* Hiệu ứng 3D nổi bo viền shade màu vàng nhạt khi hover và focus */
+        input:hover, select:hover {
+            background-color: var(--hover-yellow-bg);
+            border-color: var(--hover-yellow-border);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(230, 184, 0, 0.25), 0 2px 4px rgba(0,0,0,0.05);
         }
 
         input:focus, select:focus {
-            border-color: var(--excel-header-bg);
-            background-color: #fff;
-            box-shadow: 0 0 0 2px rgba(16, 124, 65, 0.15);
+            background-color: var(--hover-yellow-bg);
+            border-color: #d4a000;
+            transform: translateY(-1px);
+            box-shadow: 0 0 0 3px rgba(255, 230, 0, 0.4), 0 4px 10px rgba(0,0,0,0.15);
         }
 
+        /* Nút tính toán 3D màu xanh */
         .btn-calc {
             width: 100%;
-            background-color: var(--btn-blue);
+            background: linear-gradient(135deg, #107c41 0%, #0b592e 100%);
             color: #ffffff;
-            border: none;
-            padding: 10px;
-            font-size: 1rem;
+            border: 1px solid #084222;
+            padding: 12px;
+            font-size: 1.05rem;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 12px;
-            margin-bottom: 5px;
-            transition: opacity 0.2s;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            box-shadow: 0 5px 0 #07331a, 0 8px 12px rgba(0,0,0,0.25);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            top: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .btn-calc:hover {
+            background: linear-gradient(135deg, #13914c 0%, #0d6937 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #07331a, 0 12px 18px rgba(0,0,0,0.3);
         }
 
         .btn-calc:active {
-            opacity: 0.85;
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #07331a, 0 4px 6px rgba(0,0,0,0.2);
         }
 
         .result-box {
@@ -149,15 +174,16 @@
             border-left: 4px solid var(--excel-header-bg);
             padding: 8px 12px;
             border-radius: 4px;
+            margin-top: 5px;
         }
 
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 0;
+            padding: 6px 0;
             border-bottom: 1px dashed #d0e4d2;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
         }
 
         .result-item:last-child {
@@ -166,18 +192,18 @@
 
         .result-label {
             color: #2e4d32;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .result-value {
             font-weight: 700;
             color: var(--accent-blue);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .highlight {
             color: #d83b01;
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -191,19 +217,19 @@
         <div class="form-grid">
             <div class="form-group">
                 <label for="q_day">Lưu lượng Q (m³/ngđ):</label>
-                <input type="number" id="q_day" value="10000" inputmode="decimal">
+                <input type="number" id="q_day" value="10000" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group">
                 <label for="d_mm">Đường kính D (mm):</label>
-                <input type="number" id="d_mm" value="350" inputmode="decimal">
+                <input type="number" id="d_mm" value="350" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group">
                 <label for="length">Chiều dài L (m):</label>
-                <input type="number" id="length" value="18700" inputmode="decimal">
+                <input type="number" id="length" value="18700" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group">
                 <label for="material">Vật liệu ống:</label>
-                <select id="material">
+                <select id="material" onchange="calculateHydraulics()">
                     <option value="140" selected>Ống Inox (C = 140)</option>
                     <option value="140">Ống HDPE (C = 140)</option>
                     <option value="140">Ống PVC (C = 140)</option>
@@ -217,23 +243,23 @@
             </div>
             <div class="form-group">
                 <label for="h_head">Áp lực yêu cầu đầu (m):</label>
-                <input type="number" id="h_head" value="40" inputmode="decimal">
+                <input type="number" id="h_head" value="40" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group">
                 <label for="h_tail">Áp lực yêu cầu cuối (m):</label>
-                <input type="number" id="h_tail" value="15" inputmode="decimal">
+                <input type="number" id="h_tail" value="15" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group">
                 <label for="z_head">Cao độ Z điểm đầu (m):</label>
-                <input type="number" id="z_head" value="3" inputmode="decimal">
+                <input type="number" id="z_head" value="3" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group">
                 <label for="z_tail">Cao độ Z điểm cuối (m):</label>
-                <input type="number" id="z_tail" value="6" inputmode="decimal">
+                <input type="number" id="z_tail" value="6" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
             <div class="form-group" style="grid-column: span 2;">
                 <label for="efficiency">Hiệu suất bơm (η):</label>
-                <input type="number" id="efficiency" value="0.75" step="0.01" inputmode="decimal">
+                <input type="number" id="efficiency" value="0.75" step="0.01" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
         </div>
 
@@ -320,7 +346,6 @@
         document.getElementById('res_power').innerText = powerText;
     }
 
-    // Tự động tính 1 lần ban đầu khi vừa tải trang
     window.onload = calculateHydraulics;
 </script>
 
