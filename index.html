@@ -6,7 +6,7 @@
     <title>Tính Toán Công Suất Máy Bơm & Cột Áp Bơm - 2026</title>
     <style>
         :root {
-            --excel-header-bg: #107c41; /* Màu xanh lá chuẩn Excel */
+            --excel-header-bg: #107c41;
             --excel-header-text: #ffffff;
             --section-title: #0f5257;
             --bg-color: #f0f4f1;
@@ -17,9 +17,9 @@
             --btn-green: #107c41;
             --result-bg: #eef7ee;
 
-            /* Màu viền và nền shade vàng nhạt khi hover/focus */
-            --hover-yellow-bg: #ffffcc;
-            --hover-yellow-border: #e6b800;
+            /* Tone màu shade vàng rất nhạt và dịu mắt */
+            --focus-yellow-bg: #fffde6;
+            --focus-yellow-border: #e6b800;
         }
 
         * {
@@ -119,25 +119,17 @@
             width: 100%;
             height: 34px;
             transition: all 0.2s ease-in-out;
-            position: relative;
         }
 
-        /* Hiệu ứng 3D nổi bo viền shade màu vàng nhạt khi hover và focus */
-        input:hover, select:hover {
-            background-color: var(--hover-yellow-bg);
-            border-color: var(--hover-yellow-border);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(230, 184, 0, 0.25), 0 2px 4px rgba(0,0,0,0.05);
-        }
-
+        /* Chỉ khi chọn (focus) vào ô đó mới hiện shade vàng nhạt và hiệu ứng nổi 3D */
         input:focus, select:focus {
-            background-color: var(--hover-yellow-bg);
-            border-color: #d4a000;
+            background-color: var(--focus-yellow-bg);
+            border-color: var(--focus-yellow-border);
             transform: translateY(-1px);
-            box-shadow: 0 0 0 3px rgba(255, 230, 0, 0.4), 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 0 0 3px rgba(255, 235, 130, 0.45), 0 3px 8px rgba(0,0,0,0.1);
         }
 
-        /* Nút tính toán 3D màu xanh */
+        /* Nút tính toán 3D */
         .btn-calc {
             width: 100%;
             background: linear-gradient(135deg, #107c41 0%, #0b592e 100%);
