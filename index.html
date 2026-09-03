@@ -193,6 +193,35 @@
             color: #d83b01;
             font-size: 1rem;
         }
+
+        /* Khung hiển thị Cảnh báo Thủy lực */
+        .warning-box {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.83rem;
+            line-height: 1.4;
+        }
+
+        .warning-box ul {
+            padding-left: 18px;
+            margin-top: 4px;
+        }
+
+        .warning-danger {
+            background-color: #fde8e8;
+            border: 1px solid #f8b4b4;
+            color: #9b1c1c;
+        }
+
+        .warning-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
     </style>
 </head>
 <body>
@@ -276,11 +305,16 @@
                 <span class="result-value highlight" id="res_power">- kW</span>
             </div>
         </div>
+
+        <!-- Khung Cảnh Báo -->
+        <div id="warning_box" class="warning-box warning-danger">
+            <div class="warning-title">⚠️ CẢNH BÁO NGHĨA KỸ THUẬT:</div>
+            <ul id="warning_list"></ul>
+        </div>
     </div>
 </div>
 
 <script>
-    // Danh mục cơ sở dữ liệu đường kính ống (DN - Đường kính danh nghĩa, ID - Đường kính trong thực tế mm)
     const pipeDatabase = {
         hdpe: [
             { dn: "DN63", id: 55.4 },
@@ -370,7 +404,6 @@
             option.value = pipe.id;
             option.textContent = `${pipe.dn} (Di = ${pipe.id} mm)`;
             
-            // Chọn mặc định kích thước gần 350mm hoặc mục giữa danh sách
             if (pipe.dn.includes("350") || pipe.dn.includes("355") || index === Math.floor(pipes.length / 2)) {
                 option.selected = true;
             }
@@ -400,20 +433,17 @@
             document.getElementById('res_h_pump').innerText = "-";
             document.getElementById('res_p_oper').innerText = "-";
             document.getElementById('res_power').innerText = "-";
+            document.getElementById('warning_box').style.display = "none";
             return;
         }
 
         const qSec = qDay / 86400;
         const dM = dMm / 1000;
 
-        // Công thức Hazen-Williams
         const hf = (11.767 * L * Math.pow(qSec, 1.852)) / (Math.pow(C, 1.852) * Math.pow(dM, 4.87));
-
-        // Vận tốc v
         const v = (4 * qSec) / (Math.PI * Math.pow(dM, 2));
-
-        // Cột áp yêu cầu
         const reqHead = (zTail - zHead) + (hTail - hHead) + hf;
+        const pOper = reqHead + hHead;
 
         let hPumpText = "";
         let pOperText = "";
@@ -421,7 +451,7 @@
 
         if (reqHead > 0) {
             hPumpText = reqHead.toFixed(2) + " m";
-            pOperText = (reqHead + hHead).toFixed(2) + " m";
+            pOperText = pOper.toFixed(2) + " m";
             const pKw = (9.81 * qSec * reqHead) / eta;
             powerText = pKw.toFixed(2) + " kW";
         } else {
@@ -435,6 +465,38 @@
         document.getElementById('res_h_pump').innerText = hPumpText;
         document.getElementById('res_p_oper').innerText = pOperText;
         document.getElementById('res_power').innerText = powerText;
+
+        // KIỂM TRA VÀ HIỂN THỊ CẢNH BÁO KỸ THUẬT
+        const warnings = [];
+        const iLoss = hf / (L / 1000); // Tổn thất đơn vị m/km
+
+        if (v > 2.5) {
+            warnings.push(`Vận tốc dòng chảy quá cao (v = ${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước) lớn, gây xói mòn lòng ống.`);
+        } else if (v < 0.6) {
+            warnings.push(`Vận tốc dòng chảy thấp (v = ${v.toFixed(2)} m/s < 0.6 m/s): Dễ gây lắng cặn trên đường ống.`);
+        }
+
+        if (iLoss > 10) {
+            warnings.push(`Tổn thất thủy lực đơn vị quá lớn (i = ${iLoss.toFixed(1)} m/km > 10 m/km): Cần tăng kích thước đường kính D để tiết kiệm điện năng vận hành.`);
+        }
+
+        if (pOper > 100) {
+            warnings.push(`Áp lực sau bơm quá cao (${pOper.toFixed(1)} m ≈ ${(pOper/10).toFixed(1)} bar): Vượt quá cấp áp lực PN10, nguy cơ vỡ ống. Cần nâng cấp ống lên PN16/PN20 hoặc chia nhỏ trạm bơm.`);
+        }
+
+        if (reqHead > 80) {
+            warnings.push(`Cột áp bơm vượt mức tối ưu (H = ${reqHead.toFixed(1)} m > 80 m): Cân nhắc bố trí trạm bơm tăng áp trung gian trên tuyến dài.`);
+        }
+
+        const warningBox = document.getElementById('warning_box');
+        const warningList = document.getElementById('warning_list');
+
+        if (warnings.length > 0) {
+            warningList.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+            warningBox.style.display = "block";
+        } else {
+            warningBox.style.display = "none";
+        }
     }
 
     window.onload = function() {
