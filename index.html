@@ -194,6 +194,17 @@
         }
         .badge-red { background-color: #f8b4b4; color: #9b1c1c; }
         .badge-yellow { background-color: #fef08a; color: #713f12; }
+
+        /* Footer Copyright */
+        .footer-copyright {
+            margin-top: 15px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.75rem;
+            color: #666666;
+            font-weight: 600;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -314,6 +325,12 @@
             </div>
 
         </div>
+
+        <!-- Dòng Copyright bên dưới góc trái -->
+        <div class="footer-copyright">
+            © PHÒNG KỸ THUẬT - HueWACO
+        </div>
+
     </div>
 </div>
 
@@ -429,7 +446,6 @@
         document.getElementById('res_power').innerText = reqHead > 0 ? ((9.81 * qSec * reqHead) / eta).toFixed(2) + " kW" : "0 kW";
 
         // CẢNH BÁO TỪNG DÒNG
-        // 1. Vận tốc v
         if (v > 2.5) {
             setRowWarning('v', true, `Vận tốc dòng chảy quá lớn (${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước) lớn.`, 'red');
         } else if (v < 0.6) {
@@ -438,7 +454,6 @@
             setRowWarning('v', false);
         }
 
-        // 2. Tổn thất Hf (i = Hf/L)
         const iLoss = hf / (L / 1000);
         if (iLoss > 10) {
             setRowWarning('hf', true, `Tổn thất đơn vị quá lớn (i = ${iLoss.toFixed(1)} m/km > 10 m/km): Nên chọn D lớn hơn để giảm ma sát & tiết kiệm điện.`, 'red');
@@ -446,14 +461,12 @@
             setRowWarning('hf', false);
         }
 
-        // 3. Cột áp tổng máy bơm
         if (reqHead > 80) {
             setRowWarning('h_pump', true, `Cột áp bơm cao (${reqHead.toFixed(1)} m > 80 m): Tốn điện năng, nên cân nhắc trạm bơm tăng áp trung gian.`, 'yellow');
         } else {
             setRowWarning('h_pump', false);
         }
 
-        // 4. Áp lực vận hành sau bơm
         if (pOper > 100) {
             setRowWarning('p_oper', true, `Áp lực quá cao (${pOper.toFixed(1)} m ≈ ${(pOper/10).toFixed(1)} bar): Vượt cấp áp PN10 của ống HDPE/uPVC, nguy cơ vỡ ống.`, 'red');
         } else {
