@@ -280,7 +280,7 @@
                 <div id="warn_v" class="inline-warn"></div>
             </div>
 
-            <!-- Tổn thất thủy lực -->
+            <!-- Tổn thất thủy lực Hf -->
             <div class="result-row">
                 <div class="result-main">
                     <span class="result-label">Tổn thất thủy lực (H<sub>f</sub>):</span>
@@ -444,8 +444,6 @@
         document.getElementById('res_p_oper').innerText = reqHead > 0 ? pOper.toFixed(2) + " m" : "-";
         document.getElementById('res_power').innerText = reqHead > 0 ? ((9.81 * qSec * reqHead) / eta).toFixed(2) + " kW" : "0 kW";
 
-        // --- CÁC ĐIỀU KIỆN CẢNH BÁO QUY ĐỊNH MỚI ---
-
         // 1. Vận tốc v
         if (v > 2.5) {
             setRowWarning('v', true, `Vận tốc dòng chảy cao (${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước).`, 'red');
@@ -455,24 +453,26 @@
             setRowWarning('v', false);
         }
 
-        // 2. Tổn thất thủy lực đơn vị i (>= 10 m/km)
+        // 2. Tổn thất thủy lực Hf (Cảnh báo khi i >= 10 m/km hoặc tổng Hf >= 50m)
         const iLoss = hf / (L / 1000); // m/km
         if (iLoss >= 10) {
-            setRowWarning('hf', true, `Tổn thất đơn vị lớn (i = ${iLoss.toFixed(2)} m/km ≥ 10 m/km): Nên cân nhắc tăng đường kính ống D để giảm tổn thất & tiết kiệm điện.`, 'red');
+            setRowWarning('hf', true, `Tổn thất đơn vị lớn (i = ${iLoss.toFixed(2)} m/km ≥ 10 m/km): Nên cân nhắc tăng đường kính ống D để giảm ma sát & tiết kiệm điện năng.`, 'red');
+        } else if (hf >= 50) {
+            setRowWarning('hf', true, `Tổng tổn thất thủy lực lớn (Hf = ${hf.toFixed(2)} m ≥ 50 m): Tiêu hao nhiều điện năng trên đường ống dài.`, 'yellow');
         } else {
             setRowWarning('hf', false);
         }
 
         // 3. Cột áp tổng máy bơm (>= 60 m)
         if (reqHead >= 60) {
-            setRowWarning('h_pump', true, `Cột áp máy bơm cao (H = ${reqHead.toFixed(2)} m ≥ 60 m): Cần chú ý chọn dòng bơm cao áp hoặc cân nhắc bố trí trạm tăng áp.`, 'red');
+            setRowWarning('h_pump', true, `Cột áp máy bơm cao (H = ${reqHead.toFixed(2)} m ≥ 60 m): Cần tính toán chọn lại vị trí trạm tăng áp.`, 'red');
         } else {
             setRowWarning('h_pump', false);
         }
 
         // 4. Áp lực vận hành sau bơm (>= 60 m)
         if (pOper >= 60) {
-            setRowWarning('p_oper', true, `Áp lực vận hành lớn (P = ${pOper.toFixed(2)} m ≈ ${(pOper/10).toFixed(1)} bar ≥ 60 m): Cần kiểm tra cấp áp chịu đựng của ống (PN) và phụ kiện tuyến ống.`, 'red');
+            setRowWarning('p_oper', true, `Áp lực vận hành lớn (P = ${pOper.toFixed(2)} m ≈ ${(pOper/10).toFixed(1)} bar ≥ 60 m): Nguy hiểm cho đường ống và phụ kiện tuyến ống.`, 'red');
         } else {
             setRowWarning('p_oper', false);
         }
