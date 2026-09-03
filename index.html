@@ -17,7 +17,6 @@
             --btn-green: #107c41;
             --result-bg: #eef7ee;
 
-            /* Tone màu shade vàng rất nhạt và dịu mắt */
             --focus-yellow-bg: #fffde6;
             --focus-yellow-border: #e6b800;
         }
@@ -99,7 +98,6 @@
             text-overflow: ellipsis;
         }
 
-        /* Xóa nút tăng giảm số */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -121,7 +119,6 @@
             transition: all 0.2s ease-in-out;
         }
 
-        /* Chỉ khi chọn (focus) vào ô đó mới hiện shade vàng nhạt và hiệu ứng nổi 3D */
         input:focus, select:focus {
             background-color: var(--focus-yellow-bg);
             border-color: var(--focus-yellow-border);
@@ -129,7 +126,6 @@
             box-shadow: 0 0 0 3px rgba(255, 235, 130, 0.45), 0 3px 8px rgba(0,0,0,0.1);
         }
 
-        /* Nút tính toán 3D */
         .btn-calc {
             width: 100%;
             background: linear-gradient(135deg, #107c41 0%, #0b592e 100%);
@@ -211,28 +207,28 @@
                 <label for="q_day">Lưu lượng Q (m³/ngđ):</label>
                 <input type="number" id="q_day" value="10000" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
+            
+            <div class="form-group">
+                <label for="material">Vật liệu ống:</label>
+                <select id="material" onchange="updatePipeDiameters()">
+                    <option value="hdpe" data-c="140" selected>Ống HDPE (PN10 / SDR17)</option>
+                    <option value="di" data-c="130">Ống Gang dẻo DI (Class C/K9)</option>
+                    <option value="pvc" data-c="140">Ống uPVC (PN10)</option>
+                    <option value="steel" data-c="120">Ống Thép (Steel Pipe SCH40)</option>
+                    <option value="inox" data-c="140">Ống Inox (Stainless Steel)</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="d_mm">Đường kính D (mm):</label>
-                <input type="number" id="d_mm" value="350" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
+                <select id="d_mm" onchange="calculateHydraulics()"></select>
             </div>
+
             <div class="form-group">
                 <label for="length">Chiều dài L (m):</label>
                 <input type="number" id="length" value="18700" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
             </div>
-            <div class="form-group">
-                <label for="material">Vật liệu ống:</label>
-                <select id="material" onchange="calculateHydraulics()">
-                    <option value="140" selected>Ống Inox (C = 140)</option>
-                    <option value="140">Ống HDPE (C = 140)</option>
-                    <option value="140">Ống PVC (C = 140)</option>
-                    <option value="130">Ống gang dẻo mới (C = 130)</option>
-                    <option value="120">Ống gang dẻo phục hồi (C = 120)</option>
-                    <option value="120">Ống thép mới (C = 120)</option>
-                    <option value="110">Ống thép phục hồi (C = 110)</option>
-                    <option value="90">Ống thép cũ (C = 90)</option>
-                    <option value="110">Ống gang xám (C = 110)</option>
-                </select>
-            </div>
+
             <div class="form-group">
                 <label for="h_head">Áp lực yêu cầu đầu (m):</label>
                 <input type="number" id="h_head" value="40" inputmode="decimal" onfocus="this.select()" onchange="calculateHydraulics()">
@@ -284,11 +280,114 @@
 </div>
 
 <script>
+    // Danh mục cơ sở dữ liệu đường kính ống (DN - Đường kính danh nghĩa, ID - Đường kính trong thực tế mm)
+    const pipeDatabase = {
+        hdpe: [
+            { dn: "DN63", id: 55.4 },
+            { dn: "DN75", id: 66.0 },
+            { dn: "DN90", id: 79.2 },
+            { dn: "DN110", id: 96.8 },
+            { dn: "DN160", id: 141.0 },
+            { dn: "DN200", id: 176.2 },
+            { dn: "DN225", id: 198.2 },
+            { dn: "DN250", id: 220.4 },
+            { dn: "DN280", id: 246.8 },
+            { dn: "DN315", id: 277.6 },
+            { dn: "DN355", id: 312.8 },
+            { dn: "DN400", id: 352.6 },
+            { dn: "DN450", id: 396.6 },
+            { dn: "DN500", id: 440.8 },
+            { dn: "DN630", id: 555.4 }
+        ],
+        di: [
+            { dn: "DN100", id: 104.0 },
+            { dn: "DN150", id: 156.0 },
+            { dn: "DN200", id: 207.0 },
+            { dn: "DN250", id: 258.0 },
+            { dn: "DN300", id: 310.0 },
+            { dn: "DN350", id: 360.0 },
+            { dn: "DN400", id: 412.0 },
+            { dn: "DN450", id: 462.0 },
+            { dn: "DN500", id: 514.0 },
+            { dn: "DN600", id: 616.0 },
+            { dn: "DN700", id: 718.0 },
+            { dn: "DN800", id: 820.0 },
+            { dn: "DN900", id: 922.0 },
+            { dn: "DN1000", id: 1024.0 }
+        ],
+        pvc: [
+            { dn: "DN60", id: 56.0 },
+            { dn: "DN75", id: 70.6 },
+            { dn: "DN90", id: 84.8 },
+            { dn: "DN110", id: 103.6 },
+            { dn: "DN140", id: 131.8 },
+            { dn: "DN160", id: 150.6 },
+            { dn: "DN200", id: 188.2 },
+            { dn: "DN225", id: 211.8 },
+            { dn: "DN250", id: 235.4 },
+            { dn: "DN315", id: 296.6 },
+            { dn: "DN355", id: 334.2 },
+            { dn: "DN400", id: 376.6 }
+        ],
+        steel: [
+            { dn: "DN50 (2\")", id: 52.5 },
+            { dn: "DN80 (3\")", id: 77.9 },
+            { dn: "DN100 (4\")", id: 102.3 },
+            { dn: "DN150 (6\")", id: 154.1 },
+            { dn: "DN200 (8\")", id: 202.7 },
+            { dn: "DN250 (10\")", id: 254.5 },
+            { dn: "DN300 (12\")", id: 304.8 },
+            { dn: "DN350 (14\")", id: 336.6 },
+            { dn: "DN400 (16\")", id: 387.4 },
+            { dn: "DN450 (18\")", id: 438.2 },
+            { dn: "DN500 (20\")", id: 489.0 },
+            { dn: "DN600 (24\")", id: 590.6 }
+        ],
+        inox: [
+            { dn: "DN50", id: 53.0 },
+            { dn: "DN65", id: 68.0 },
+            { dn: "DN80", id: 80.0 },
+            { dn: "DN100", id: 102.0 },
+            { dn: "DN150", id: 154.0 },
+            { dn: "DN200", id: 203.0 },
+            { dn: "DN250", id: 254.0 },
+            { dn: "DN300", id: 305.0 },
+            { dn: "DN350", id: 342.0 },
+            { dn: "DN400", id: 390.0 }
+        ]
+    };
+
+    function updatePipeDiameters() {
+        const materialSelect = document.getElementById('material');
+        const selectedMaterial = materialSelect.value;
+        const dSelect = document.getElementById('d_mm');
+        
+        dSelect.innerHTML = '';
+
+        const pipes = pipeDatabase[selectedMaterial] || [];
+        pipes.forEach((pipe, index) => {
+            const option = document.createElement('option');
+            option.value = pipe.id;
+            option.textContent = `${pipe.dn} (Di = ${pipe.id} mm)`;
+            
+            // Chọn mặc định kích thước gần 350mm hoặc mục giữa danh sách
+            if (pipe.dn.includes("350") || pipe.dn.includes("355") || index === Math.floor(pipes.length / 2)) {
+                option.selected = true;
+            }
+            dSelect.appendChild(option);
+        });
+
+        calculateHydraulics();
+    }
+
     function calculateHydraulics() {
         const qDay = parseFloat(document.getElementById('q_day').value) || 0;
         const dMm = parseFloat(document.getElementById('d_mm').value) || 0;
         const L = parseFloat(document.getElementById('length').value) || 0;
-        const C = parseFloat(document.getElementById('material').value) || 140;
+        
+        const materialSelect = document.getElementById('material');
+        const C = parseFloat(materialSelect.options[materialSelect.selectedIndex].getAttribute('data-c')) || 140;
+
         const hHead = parseFloat(document.getElementById('h_head').value) || 0;
         const hTail = parseFloat(document.getElementById('h_tail').value) || 0;
         const zHead = parseFloat(document.getElementById('z_head').value) || 0;
@@ -338,7 +437,9 @@
         document.getElementById('res_power').innerText = powerText;
     }
 
-    window.onload = calculateHydraulics;
+    window.onload = function() {
+        updatePipeDiameters();
+    };
 </script>
 
 </body>
