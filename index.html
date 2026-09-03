@@ -21,11 +21,7 @@
             --focus-yellow-border: #e6b800;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -55,9 +51,7 @@
             text-transform: uppercase;
         }
 
-        .content {
-            padding: 12px 15px;
-        }
+        .content { padding: 12px 15px; }
 
         .section-title {
             font-weight: 700;
@@ -77,16 +71,10 @@
         }
 
         @media (max-width: 480px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
+            .form-grid { grid-template-columns: 1fr; gap: 6px; }
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .form-group { display: flex; flex-direction: column; }
 
         label {
             font-size: 0.8rem;
@@ -99,13 +87,8 @@
         }
 
         input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
 
         input, select {
             padding: 6px 8px;
@@ -160,68 +143,57 @@
             background-color: var(--result-bg);
             border: 1px solid #c3e6c5;
             border-left: 4px solid var(--excel-header-bg);
-            padding: 8px 12px;
+            padding: 6px 12px;
             border-radius: 4px;
             margin-top: 5px;
         }
 
-        .result-item {
+        .result-row {
+            padding: 8px 0;
+            border-bottom: 1px dashed #d0e4d2;
+        }
+
+        .result-row:last-child { border-bottom: none; }
+
+        .result-main {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px dashed #d0e4d2;
             font-size: 0.88rem;
         }
 
-        .result-item:last-child {
-            border-bottom: none;
-        }
+        .result-label { color: #2e4d32; font-weight: 600; }
+        .result-value { font-weight: 700; color: var(--accent-blue); font-size: 0.95rem; }
+        .highlight { color: #d83b01; font-size: 1rem; }
 
-        .result-label {
-            color: #2e4d32;
+        /* Cảnh báo dòng inline */
+        .inline-warn {
+            display: none;
+            font-size: 0.78rem;
+            margin-top: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            line-height: 1.35;
+        }
+        .warn-red {
+            background-color: #fde8e8;
+            color: #9b1c1c;
+            border-left: 3px solid #f8b4b4;
+        }
+        .warn-yellow {
+            background-color: #fef08a;
+            color: #713f12;
+            border-left: 3px solid #eab308;
+        }
+        .status-badge {
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
             font-weight: 600;
         }
-
-        .result-value {
-            font-weight: 700;
-            color: var(--accent-blue);
-            font-size: 0.95rem;
-        }
-
-        .highlight {
-            color: #d83b01;
-            font-size: 1rem;
-        }
-
-        /* Khung hiển thị Cảnh báo Thủy lực */
-        .warning-box {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.83rem;
-            line-height: 1.4;
-        }
-
-        .warning-box ul {
-            padding-left: 18px;
-            margin-top: 4px;
-        }
-
-        .warning-danger {
-            background-color: #fde8e8;
-            border: 1px solid #f8b4b4;
-            color: #9b1c1c;
-        }
-
-        .warning-title {
-            font-weight: bold;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .badge-red { background-color: #f8b4b4; color: #9b1c1c; }
+        .badge-yellow { background-color: #fef08a; color: #713f12; }
     </style>
 </head>
 <body>
@@ -284,32 +256,63 @@
 
         <div class="section-title">Kết Quả Tính Toán</div>
         <div class="result-box">
-            <div class="result-item">
-                <span class="result-label">Vận tốc dòng chảy (v):</span>
-                <span class="result-value" id="res_v">- m/s</span>
+            
+            <!-- Vận tốc -->
+            <div class="result-row">
+                <div class="result-main">
+                    <span class="result-label">Vận tốc dòng chảy (v):</span>
+                    <div>
+                        <span class="result-value" id="res_v">- m/s</span>
+                        <span id="badge_v"></span>
+                    </div>
+                </div>
+                <div id="warn_v" class="inline-warn"></div>
             </div>
-            <div class="result-item">
-                <span class="result-label">Tổn thất thủy lực (H<sub>f</sub>):</span>
-                <span class="result-value" id="res_hf">- m</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Cột áp tổng máy bơm:</span>
-                <span class="result-value highlight" id="res_h_pump">- m</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Áp lực vận hành sau bơm:</span>
-                <span class="result-value" id="res_p_oper">- m</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Công suất điện máy bơm (P):</span>
-                <span class="result-value highlight" id="res_power">- kW</span>
-            </div>
-        </div>
 
-        <!-- Khung Cảnh Báo -->
-        <div id="warning_box" class="warning-box warning-danger">
-            <div class="warning-title">⚠️ CẢNH BÁO NGHĨA KỸ THUẬT:</div>
-            <ul id="warning_list"></ul>
+            <!-- Tổn thất thủy lực -->
+            <div class="result-row">
+                <div class="result-main">
+                    <span class="result-label">Tổn thất thủy lực (H<sub>f</sub>):</span>
+                    <div>
+                        <span class="result-value" id="res_hf">- m</span>
+                        <span id="badge_hf"></span>
+                    </div>
+                </div>
+                <div id="warn_hf" class="inline-warn"></div>
+            </div>
+
+            <!-- Cột áp tổng máy bơm -->
+            <div class="result-row">
+                <div class="result-main">
+                    <span class="result-label">Cột áp tổng máy bơm:</span>
+                    <div>
+                        <span class="result-value highlight" id="res_h_pump">- m</span>
+                        <span id="badge_h_pump"></span>
+                    </div>
+                </div>
+                <div id="warn_h_pump" class="inline-warn"></div>
+            </div>
+
+            <!-- Áp lực vận hành -->
+            <div class="result-row">
+                <div class="result-main">
+                    <span class="result-label">Áp lực vận hành sau bơm:</span>
+                    <div>
+                        <span class="result-value" id="res_p_oper">- m</span>
+                        <span id="badge_p_oper"></span>
+                    </div>
+                </div>
+                <div id="warn_p_oper" class="inline-warn"></div>
+            </div>
+
+            <!-- Công suất điện -->
+            <div class="result-row">
+                <div class="result-main">
+                    <span class="result-label">Công suất điện máy bơm (P):</span>
+                    <span class="result-value highlight" id="res_power">- kW</span>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -317,77 +320,33 @@
 <script>
     const pipeDatabase = {
         hdpe: [
-            { dn: "DN63", id: 55.4 },
-            { dn: "DN75", id: 66.0 },
-            { dn: "DN90", id: 79.2 },
-            { dn: "DN110", id: 96.8 },
-            { dn: "DN160", id: 141.0 },
-            { dn: "DN200", id: 176.2 },
-            { dn: "DN225", id: 198.2 },
-            { dn: "DN250", id: 220.4 },
-            { dn: "DN280", id: 246.8 },
-            { dn: "DN315", id: 277.6 },
-            { dn: "DN355", id: 312.8 },
-            { dn: "DN400", id: 352.6 },
-            { dn: "DN450", id: 396.6 },
-            { dn: "DN500", id: 440.8 },
-            { dn: "DN630", id: 555.4 }
+            { dn: "DN63", id: 55.4 }, { dn: "DN75", id: 66.0 }, { dn: "DN90", id: 79.2 },
+            { dn: "DN110", id: 96.8 }, { dn: "DN160", id: 141.0 }, { dn: "DN200", id: 176.2 },
+            { dn: "DN225", id: 198.2 }, { dn: "DN250", id: 220.4 }, { dn: "DN280", id: 246.8 },
+            { dn: "DN315", id: 277.6 }, { dn: "DN355", id: 312.8 }, { dn: "DN400", id: 352.6 },
+            { dn: "DN450", id: 396.6 }, { dn: "DN500", id: 440.8 }, { dn: "DN630", id: 555.4 }
         ],
         di: [
-            { dn: "DN100", id: 104.0 },
-            { dn: "DN150", id: 156.0 },
-            { dn: "DN200", id: 207.0 },
-            { dn: "DN250", id: 258.0 },
-            { dn: "DN300", id: 310.0 },
-            { dn: "DN350", id: 360.0 },
-            { dn: "DN400", id: 412.0 },
-            { dn: "DN450", id: 462.0 },
-            { dn: "DN500", id: 514.0 },
-            { dn: "DN600", id: 616.0 },
-            { dn: "DN700", id: 718.0 },
-            { dn: "DN800", id: 820.0 },
-            { dn: "DN900", id: 922.0 },
-            { dn: "DN1000", id: 1024.0 }
+            { dn: "DN100", id: 104.0 }, { dn: "DN150", id: 156.0 }, { dn: "DN200", id: 207.0 },
+            { dn: "DN250", id: 258.0 }, { dn: "DN300", id: 310.0 }, { dn: "DN350", id: 360.0 },
+            { dn: "DN400", id: 412.0 }, { dn: "DN450", id: 462.0 }, { dn: "DN500", id: 514.0 },
+            { dn: "DN600", id: 616.0 }, { dn: "DN700", id: 718.0 }, { dn: "DN800", id: 820.0 }
         ],
         pvc: [
-            { dn: "DN60", id: 56.0 },
-            { dn: "DN75", id: 70.6 },
-            { dn: "DN90", id: 84.8 },
-            { dn: "DN110", id: 103.6 },
-            { dn: "DN140", id: 131.8 },
-            { dn: "DN160", id: 150.6 },
-            { dn: "DN200", id: 188.2 },
-            { dn: "DN225", id: 211.8 },
-            { dn: "DN250", id: 235.4 },
-            { dn: "DN315", id: 296.6 },
-            { dn: "DN355", id: 334.2 },
-            { dn: "DN400", id: 376.6 }
+            { dn: "DN60", id: 56.0 }, { dn: "DN75", id: 70.6 }, { dn: "DN90", id: 84.8 },
+            { dn: "DN110", id: 103.6 }, { dn: "DN140", id: 131.8 }, { dn: "DN160", id: 150.6 },
+            { dn: "DN200", id: 188.2 }, { dn: "DN225", id: 211.8 }, { dn: "DN250", id: 235.4 },
+            { dn: "DN315", id: 296.6 }, { dn: "DN355", id: 334.2 }, { dn: "DN400", id: 376.6 }
         ],
         steel: [
-            { dn: "DN50 (2\")", id: 52.5 },
-            { dn: "DN80 (3\")", id: 77.9 },
-            { dn: "DN100 (4\")", id: 102.3 },
-            { dn: "DN150 (6\")", id: 154.1 },
-            { dn: "DN200 (8\")", id: 202.7 },
-            { dn: "DN250 (10\")", id: 254.5 },
-            { dn: "DN300 (12\")", id: 304.8 },
-            { dn: "DN350 (14\")", id: 336.6 },
-            { dn: "DN400 (16\")", id: 387.4 },
-            { dn: "DN450 (18\")", id: 438.2 },
-            { dn: "DN500 (20\")", id: 489.0 },
-            { dn: "DN600 (24\")", id: 590.6 }
+            { dn: "DN50 (2\")", id: 52.5 }, { dn: "DN80 (3\")", id: 77.9 }, { dn: "DN100 (4\")", id: 102.3 },
+            { dn: "DN150 (6\")", id: 154.1 }, { dn: "DN200 (8\")", id: 202.7 }, { dn: "DN250 (10\")", id: 254.5 },
+            { dn: "DN300 (12\")", id: 304.8 }, { dn: "DN350 (14\")", id: 336.6 }, { dn: "DN400 (16\")", id: 387.4 }
         ],
         inox: [
-            { dn: "DN50", id: 53.0 },
-            { dn: "DN65", id: 68.0 },
-            { dn: "DN80", id: 80.0 },
-            { dn: "DN100", id: 102.0 },
-            { dn: "DN150", id: 154.0 },
-            { dn: "DN200", id: 203.0 },
-            { dn: "DN250", id: 254.0 },
-            { dn: "DN300", id: 305.0 },
-            { dn: "DN350", id: 342.0 },
-            { dn: "DN400", id: 390.0 }
+            { dn: "DN50", id: 53.0 }, { dn: "DN65", id: 68.0 }, { dn: "DN80", id: 80.0 },
+            { dn: "DN100", id: 102.0 }, { dn: "DN150", id: 154.0 }, { dn: "DN200", id: 203.0 },
+            { dn: "DN250", id: 254.0 }, { dn: "DN300", id: 305.0 }, { dn: "DN350", id: 342.0 }
         ]
     };
 
@@ -395,7 +354,6 @@
         const materialSelect = document.getElementById('material');
         const selectedMaterial = materialSelect.value;
         const dSelect = document.getElementById('d_mm');
-        
         dSelect.innerHTML = '';
 
         const pipes = pipeDatabase[selectedMaterial] || [];
@@ -403,7 +361,6 @@
             const option = document.createElement('option');
             option.value = pipe.id;
             option.textContent = `${pipe.dn} (Di = ${pipe.id} mm)`;
-            
             if (pipe.dn.includes("350") || pipe.dn.includes("355") || index === Math.floor(pipes.length / 2)) {
                 option.selected = true;
             }
@@ -411,6 +368,26 @@
         });
 
         calculateHydraulics();
+    }
+
+    function setRowWarning(fieldId, isShow, text, level) {
+        const warnEl = document.getElementById(`warn_${fieldId}`);
+        const badgeEl = document.getElementById(`badge_${fieldId}`);
+        if (!warnEl || !badgeEl) return;
+
+        if (isShow) {
+            const isRed = level === 'red';
+            warnEl.className = `inline-warn ${isRed ? 'warn-red' : 'warn-yellow'}`;
+            warnEl.innerText = text;
+            warnEl.style.display = 'block';
+
+            badgeEl.className = `status-badge ${isRed ? 'badge-red' : 'badge-yellow'}`;
+            badgeEl.innerText = isRed ? '⚠️ Nguy cơ' : '⚠️ Chú ý';
+            badgeEl.style.display = 'inline-block';
+        } else {
+            warnEl.style.display = 'none';
+            badgeEl.style.display = 'none';
+        }
     }
 
     function calculateHydraulics() {
@@ -433,7 +410,7 @@
             document.getElementById('res_h_pump').innerText = "-";
             document.getElementById('res_p_oper').innerText = "-";
             document.getElementById('res_power').innerText = "-";
-            document.getElementById('warning_box').style.display = "none";
+            ['v', 'hf', 'h_pump', 'p_oper'].forEach(f => setRowWarning(f, false));
             return;
         }
 
@@ -445,57 +422,42 @@
         const reqHead = (zTail - zHead) + (hTail - hHead) + hf;
         const pOper = reqHead + hHead;
 
-        let hPumpText = "";
-        let pOperText = "";
-        let powerText = "";
-
-        if (reqHead > 0) {
-            hPumpText = reqHead.toFixed(2) + " m";
-            pOperText = pOper.toFixed(2) + " m";
-            const pKw = (9.81 * qSec * reqHead) / eta;
-            powerText = pKw.toFixed(2) + " kW";
-        } else {
-            hPumpText = "Không cần máy bơm";
-            pOperText = "-";
-            powerText = "Không cần máy bơm";
-        }
-
         document.getElementById('res_v').innerText = v.toFixed(3) + " m/s";
         document.getElementById('res_hf').innerText = hf.toFixed(2) + " m";
-        document.getElementById('res_h_pump').innerText = hPumpText;
-        document.getElementById('res_p_oper').innerText = pOperText;
-        document.getElementById('res_power').innerText = powerText;
+        document.getElementById('res_h_pump').innerText = reqHead > 0 ? reqHead.toFixed(2) + " m" : "Không cần bơm";
+        document.getElementById('res_p_oper').innerText = reqHead > 0 ? pOper.toFixed(2) + " m" : "-";
+        document.getElementById('res_power').innerText = reqHead > 0 ? ((9.81 * qSec * reqHead) / eta).toFixed(2) + " kW" : "0 kW";
 
-        // KIỂM TRA VÀ HIỂN THỊ CẢNH BÁO KỸ THUẬT
-        const warnings = [];
-        const iLoss = hf / (L / 1000); // Tổn thất đơn vị m/km
-
+        // CẢNH BÁO TỪNG DÒNG
+        // 1. Vận tốc v
         if (v > 2.5) {
-            warnings.push(`Vận tốc dòng chảy quá cao (v = ${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước) lớn, gây xói mòn lòng ống.`);
+            setRowWarning('v', true, `Vận tốc dòng chảy quá lớn (${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước) lớn.`, 'red');
         } else if (v < 0.6) {
-            warnings.push(`Vận tốc dòng chảy thấp (v = ${v.toFixed(2)} m/s < 0.6 m/s): Dễ gây lắng cặn trên đường ống.`);
-        }
-
-        if (iLoss > 10) {
-            warnings.push(`Tổn thất thủy lực đơn vị quá lớn (i = ${iLoss.toFixed(1)} m/km > 10 m/km): Cần tăng kích thước đường kính D để tiết kiệm điện năng vận hành.`);
-        }
-
-        if (pOper > 100) {
-            warnings.push(`Áp lực sau bơm quá cao (${pOper.toFixed(1)} m ≈ ${(pOper/10).toFixed(1)} bar): Vượt quá cấp áp lực PN10, nguy cơ vỡ ống. Cần nâng cấp ống lên PN16/PN20 hoặc chia nhỏ trạm bơm.`);
-        }
-
-        if (reqHead > 80) {
-            warnings.push(`Cột áp bơm vượt mức tối ưu (H = ${reqHead.toFixed(1)} m > 80 m): Cân nhắc bố trí trạm bơm tăng áp trung gian trên tuyến dài.`);
-        }
-
-        const warningBox = document.getElementById('warning_box');
-        const warningList = document.getElementById('warning_list');
-
-        if (warnings.length > 0) {
-            warningList.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
-            warningBox.style.display = "block";
+            setRowWarning('v', true, `Vận tốc quá thấp (${v.toFixed(2)} m/s < 0.6 m/s): Nguy cơ đọng cặn trong ống.`, 'yellow');
         } else {
-            warningBox.style.display = "none";
+            setRowWarning('v', false);
+        }
+
+        // 2. Tổn thất Hf (i = Hf/L)
+        const iLoss = hf / (L / 1000);
+        if (iLoss > 10) {
+            setRowWarning('hf', true, `Tổn thất đơn vị quá lớn (i = ${iLoss.toFixed(1)} m/km > 10 m/km): Nên chọn D lớn hơn để giảm ma sát & tiết kiệm điện.`, 'red');
+        } else {
+            setRowWarning('hf', false);
+        }
+
+        // 3. Cột áp tổng máy bơm
+        if (reqHead > 80) {
+            setRowWarning('h_pump', true, `Cột áp bơm cao (${reqHead.toFixed(1)} m > 80 m): Tốn điện năng, nên cân nhắc trạm bơm tăng áp trung gian.`, 'yellow');
+        } else {
+            setRowWarning('h_pump', false);
+        }
+
+        // 4. Áp lực vận hành sau bơm
+        if (pOper > 100) {
+            setRowWarning('p_oper', true, `Áp lực quá cao (${pOper.toFixed(1)} m ≈ ${(pOper/10).toFixed(1)} bar): Vượt cấp áp PN10 của ống HDPE/uPVC, nguy cơ vỡ ống.`, 'red');
+        } else {
+            setRowWarning('p_oper', false);
         }
     }
 
