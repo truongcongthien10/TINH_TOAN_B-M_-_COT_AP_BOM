@@ -326,7 +326,6 @@
 
         </div>
 
-        <!-- Dòng Copyright bên dưới góc trái -->
         <div class="footer-copyright">
             © PHÒNG KỸ THUẬT - HueWACO
         </div>
@@ -399,7 +398,7 @@
             warnEl.style.display = 'block';
 
             badgeEl.className = `status-badge ${isRed ? 'badge-red' : 'badge-yellow'}`;
-            badgeEl.innerText = isRed ? '⚠️ Nguy cơ' : '⚠️ Chú ý';
+            badgeEl.innerText = isRed ? '⚠️ Cảnh báo' : '⚠️ Chú ý';
             badgeEl.style.display = 'inline-block';
         } else {
             warnEl.style.display = 'none';
@@ -445,30 +444,35 @@
         document.getElementById('res_p_oper').innerText = reqHead > 0 ? pOper.toFixed(2) + " m" : "-";
         document.getElementById('res_power').innerText = reqHead > 0 ? ((9.81 * qSec * reqHead) / eta).toFixed(2) + " kW" : "0 kW";
 
-        // CẢNH BÁO TỪNG DÒNG
+        // --- CÁC ĐIỀU KIỆN CẢNH BÁO QUY ĐỊNH MỚI ---
+
+        // 1. Vận tốc v
         if (v > 2.5) {
-            setRowWarning('v', true, `Vận tốc dòng chảy quá lớn (${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước) lớn.`, 'red');
+            setRowWarning('v', true, `Vận tốc dòng chảy cao (${v.toFixed(2)} m/s > 2.5 m/s): Nguy cơ va đập thủy lực (búa nước).`, 'red');
         } else if (v < 0.6) {
-            setRowWarning('v', true, `Vận tốc quá thấp (${v.toFixed(2)} m/s < 0.6 m/s): Nguy cơ đọng cặn trong ống.`, 'yellow');
+            setRowWarning('v', true, `Vận tốc thấp (${v.toFixed(2)} m/s < 0.6 m/s): Nguy cơ lắng cặn trong đường ống.`, 'yellow');
         } else {
             setRowWarning('v', false);
         }
 
-        const iLoss = hf / (L / 1000);
-        if (iLoss > 10) {
-            setRowWarning('hf', true, `Tổn thất đơn vị quá lớn (i = ${iLoss.toFixed(1)} m/km > 10 m/km): Nên chọn D lớn hơn để giảm ma sát & tiết kiệm điện.`, 'red');
+        // 2. Tổn thất thủy lực đơn vị i (>= 10 m/km)
+        const iLoss = hf / (L / 1000); // m/km
+        if (iLoss >= 10) {
+            setRowWarning('hf', true, `Tổn thất đơn vị lớn (i = ${iLoss.toFixed(2)} m/km ≥ 10 m/km): Nên cân nhắc tăng đường kính ống D để giảm tổn thất & tiết kiệm điện.`, 'red');
         } else {
             setRowWarning('hf', false);
         }
 
-        if (reqHead > 80) {
-            setRowWarning('h_pump', true, `Cột áp bơm cao (${reqHead.toFixed(1)} m > 80 m): Tốn điện năng, nên cân nhắc trạm bơm tăng áp trung gian.`, 'yellow');
+        // 3. Cột áp tổng máy bơm (>= 60 m)
+        if (reqHead >= 60) {
+            setRowWarning('h_pump', true, `Cột áp máy bơm cao (H = ${reqHead.toFixed(2)} m ≥ 60 m): Cần chú ý chọn dòng bơm cao áp hoặc cân nhắc bố trí trạm tăng áp.`, 'red');
         } else {
             setRowWarning('h_pump', false);
         }
 
-        if (pOper > 100) {
-            setRowWarning('p_oper', true, `Áp lực quá cao (${pOper.toFixed(1)} m ≈ ${(pOper/10).toFixed(1)} bar): Vượt cấp áp PN10 của ống HDPE/uPVC, nguy cơ vỡ ống.`, 'red');
+        // 4. Áp lực vận hành sau bơm (>= 60 m)
+        if (pOper >= 60) {
+            setRowWarning('p_oper', true, `Áp lực vận hành lớn (P = ${pOper.toFixed(2)} m ≈ ${(pOper/10).toFixed(1)} bar ≥ 60 m): Cần kiểm tra cấp áp chịu đựng của ống (PN) và phụ kiện tuyến ống.`, 'red');
         } else {
             setRowWarning('p_oper', false);
         }
